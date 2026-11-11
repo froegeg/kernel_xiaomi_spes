@@ -1,0 +1,43 @@
+name: Build Kernel spes 4.19 BakaSU (Android 17)
+
+on:
+  workflow_dispatch: # Allows you to trigger the build manually from the Actions tab
+  push:
+    branches:
+      - main-a17-sm8250-base-bakasu
+
+jobs:
+  Build-Kernel:
+    strategy:
+      fail-fast: false
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write # Changed to 'write' so the action can create a Release for your zip
+
+    steps:
+      - name: Build Kernel spes 4.19 BakaSU A17
+        uses: dabao1955/kernel_build_action@main
+        with:
+          # 1. Target the specific Android 17 + BakaSU branch
+          kernel-url: https://github.com/muralivijay/kernel_xiaomi_spes/
+          kernel-dir: msm-4.19
+          kernel-branch: main-a17-sm8250-base-bakasu
+          
+          # 2. Standard device config
+          config: vendor/spes-perf_defconfig
+          arch: arm64
+          
+          # 3. Compiler settings
+          aosp-gcc: true
+          aosp-clang: true
+          aosp-clang-version: r596125
+          extra-cmd: LLVM=1 LLVM_IAS=1
+          
+          # 4. BakaSU Integration (Crucial Step)
+          ksu: false          # Disable default official KernelSU to prevent conflicts
+          ksu-other: true     # Enable third-party KernelSU fork support
+          ksu-url: https://github.com/Baka-SU/BakaSU # Point directly to official BakaSU
+          
+          # 5. Packaging
+          anykernel3: true
+          anykernel3-url: https://github.com/muralivijay/AnyKernel3
