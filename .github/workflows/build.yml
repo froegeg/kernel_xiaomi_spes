@@ -10,7 +10,8 @@ jobs:
   Build-Kernel:
     strategy:
       fail-fast: false
-    runs-on: ubuntu-latest
+    # FIX 1: Force an older Ubuntu version to avoid package errors on Ubuntu 26
+    runs-on: ubuntu-24.04 
     permissions:
       contents: write
 
@@ -25,10 +26,15 @@ jobs:
           arch: arm64
           aosp-gcc: true
           aosp-clang: true
-          aosp-clang-version: r596125
-          extra-make-args: LLVM=1 LLVM_IAS=1  # ✅ Changed from 'extra-cmd' to 'extra-make-args'
+          
+          # BakaSU Settings
           ksu: false
           ksu-other: true
           ksu-url: https://github.com/Baka-SU/BakaSU
+          
+          aosp-clang-version: r596125
           anykernel3: true
           anykernel3-url: https://github.com/muralivijay/AnyKernel3
+          
+          # FIX 2: Change 'extra-cmd' to 'extra-make-args'
+          extra-make-args: LLVM=1 LLVM_IAS=1
